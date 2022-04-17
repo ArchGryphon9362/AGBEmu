@@ -49,12 +49,7 @@ void CPU::fetch(uint8_t count) {
 
 void CPU::NOP() {
     // No OP'ing is so lame :cry_tear:
-
-    if (cycles == 0) {
-        // do nothing :'(
-    }
-
-    cycles--;
+    std::cout << "We NOP'd... So lame!" << std::endl;
 }
 
 /* #endregion */

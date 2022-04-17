@@ -89,7 +89,10 @@ class CPU {
 
         /* #region Instructions */
 
-        void NOP();   //
+//      x0              x1                  x2                  x3              x4              x5              x6              x7              x8                  x9                  xA                  xB              xC              xD              xE              xF
+/*0x*/  void NOP();     void LD_BC_X();     void LD_0BC_A();    void INC_BC();  void INC_B();   void DEC_B();   void LD_B_X();  void RLCA();    void LD_0X_SP();    void ADD_HL_BC();   void LD_A_0BC();    void DEC_BC();  void INC_C();   void DEC_C();   void LD_C_X();  void RRCA();
+/*1x*/  void STOP();    void LD_DE_X();     void LD_0DE_A();    void INC_DE();  void INC_D();   void DEC_D();   void LD_D_X();  void RLA();     void JR_X();        void ADD_HL_DE();   void LD_A_0DE();    void DEC_DE();  void INC_E();   void DEC_E();   void LD_E_X();  void RRA();
+/*2x*/  
 
         /* #endregion */
 };
