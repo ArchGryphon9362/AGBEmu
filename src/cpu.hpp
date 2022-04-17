@@ -65,15 +65,6 @@ class CPU {
             uint16_t stackPointer;
             uint16_t programCounter;
         };
-        typedef enum {
-            IMP,        // implied, we don't need any parameters                                            ()
-            PFX,        // prefix, we need to fetch next instruction which won't need any params either     ()
-            IMM_8U,     // immediate 8 bit, next byte after instruction is the parameter                    (d8)
-            IMM_16,     // immediate 16 bit, next 2 bytes after ins are the args                            (d16)
-            REL,        // relative to current position address                                             (r8)
-            ABS_8,      // absolute 8 bit, fetch arg and convert address to last page                       (a8)
-            ABS_16      // absolute 16 bit address                                                          (a16)
-        } ARG;
         
         Registers regs;
         Bus *bus = nullptr;
@@ -86,15 +77,15 @@ class CPU {
         struct Instruction {
             std::string name;		
             void (CPU::*operate)(void) = nullptr;
-            ARG argumentMode;
+            uint8_t argLength;
             uint8_t cycles = 0;
         };
 
         std::vector<Instruction> lookup;
         void doPrefix();
 
-        void fetch();
-        uint8_t fetechedValue = 0x00;
+        void fetch(uint8_t count);
+        uint16_t fetechedValue = 0x0000; // usually will be 8 bytes but sometimes may be 16 so keeping this a uint16
 
         /* #region Instructions */
 
