@@ -386,6 +386,174 @@ void CPU::ADD_SP_X() {
     regs.stackPointer = result;
 }
 
+void CPU::AND_0HL() {
+    uint8_t result = regs.af.accumulator & read(regs.hl.value);
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_A() {
+    uint8_t result = regs.af.accumulator & regs.af.accumulator;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_B() {
+    uint8_t result = regs.af.accumulator & regs.bc.b;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_C() {
+    uint8_t result = regs.af.accumulator & regs.bc.c;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_D() {
+    uint8_t result = regs.af.accumulator & regs.de.d;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_E() {
+    uint8_t result = regs.af.accumulator & regs.de.e;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_H() {
+    uint8_t result = regs.af.accumulator & regs.hl.h;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_L() {
+    uint8_t result = regs.af.accumulator & regs.hl.l;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::AND_X() {
+    uint8_t result = regs.af.accumulator & fetchedValue;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x01;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+
+    regs.af.accumulator = result;
+}
+
+void CPU::CALL_C_X() {
+    if (regs.af.c) {
+        cycles += 3;
+
+        write(--regs.stackPointer, (regs.programCounter & 0b1111111100000000) >> 8); // push high byte onto stack
+        write(--regs.stackPointer,  regs.programCounter & 0b0000000011111111);       // push low byte onto stack
+
+        regs.programCounter = fetchedValue;
+    }
+}
+
+void CPU::CALL_NC_X() {
+    if (!regs.af.c) {
+        cycles += 3;
+
+        write(--regs.stackPointer, (regs.programCounter & 0b1111111100000000) >> 8); // push high byte onto stack
+        write(--regs.stackPointer,  regs.programCounter & 0b0000000011111111);       // push low byte onto stack
+
+        regs.programCounter = fetchedValue;
+    }
+}
+
+void CPU::CALL_NZ_X() {
+    if (!regs.af.z) {
+        cycles += 3;
+
+        write(--regs.stackPointer, (regs.programCounter & 0b1111111100000000) >> 8); // push high byte onto stack
+        write(--regs.stackPointer,  regs.programCounter & 0b0000000011111111);       // push low byte onto stack
+
+        regs.programCounter = fetchedValue;
+    }
+}
+
+void CPU::CALL_X() {
+    write(--regs.stackPointer, (regs.programCounter & 0b1111111100000000) >> 8); // push high byte onto stack
+    write(--regs.stackPointer,  regs.programCounter & 0b0000000011111111);       // push low byte onto stack
+
+    regs.programCounter = fetchedValue;
+}
+
+void CPU::CALL_Z_X() {
+    if (regs.af.z) {
+        cycles += 3;
+
+        write(--regs.stackPointer, (regs.programCounter & 0b1111111100000000) >> 8); // push high byte onto stack
+        write(--regs.stackPointer,  regs.programCounter & 0b0000000011111111);       // push low byte onto stack
+
+        regs.programCounter = fetchedValue;
+    }
+}
+
 void CPU::NOP() {
     // No OP'ing is so lame :cry_tear:
     std::cout << "We NOP'd... So lame!" << std::endl;

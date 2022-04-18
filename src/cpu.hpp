@@ -62,8 +62,8 @@ class CPU {
                 uint16_t value;
             } hl; // high low register
 
-            uint16_t stackPointer;
-            uint16_t programCounter;
+            uint16_t stackPointer = 0x00;
+            uint16_t programCounter = 0x00;
         };
 
         uint8_t IME = 0x00;

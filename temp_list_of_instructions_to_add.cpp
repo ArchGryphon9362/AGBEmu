@@ -1,17 +1,3 @@
-void CPU::AND_0HL();
-void CPU::AND_A();
-void CPU::AND_B();
-void CPU::AND_C();
-void CPU::AND_D();
-void CPU::AND_E();
-void CPU::AND_H();
-void CPU::AND_L();
-void CPU::AND_X();
-void CPU::CALL_C_X();
-void CPU::CALL_NC_X();
-void CPU::CALL_NZ_X();
-void CPU::CALL_X();
-void CPU::CALL_Z_X();
 void CPU::CCF();
 void CPU::CPL();
 void CPU::CP_0HL();
