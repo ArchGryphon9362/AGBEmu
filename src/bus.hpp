@@ -15,8 +15,22 @@ class Bus {
         void clock();
         void testCPU();
     private:
+        union Interrupts {
+            struct {
+                uint8_t vblank : 1;
+                uint8_t lcd_stat : 1;
+                uint8_t timer : 1;
+                uint8_t serial : 1;
+                uint8_t joypad : 1;
+                uint8_t unused : 3;
+            };
+            uint8_t value;
+        };
+        
         CPU cpu;
-        std::array<uint8_t, 32 * 1024> ram;
+        std::array<uint8_t, 4 * 1024> ram;
+        Interrupts intFlag;
+        Interrupts intEnable;
 };
 
 #endif
