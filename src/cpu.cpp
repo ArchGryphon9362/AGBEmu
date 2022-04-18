@@ -30,6 +30,9 @@ uint8_t CPU::read(uint16_t addr) {
 
 void CPU::clock() {
     if (cycles == 0) {
+        // :: Account for halt bug!
+        if (scheduleIME) { IME = 0x01; scheduleIME = 0x00; }
+
         opcode = read(regs.programCounter++);
         cycles = lookup[opcode].cycles;
 
