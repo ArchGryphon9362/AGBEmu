@@ -22,6 +22,7 @@ class CPU {
         ~CPU();
         void clock();
         void ConnectBus(Bus *n) { bus = n; }
+        void testCPU();
     private:
         struct Registers
         {

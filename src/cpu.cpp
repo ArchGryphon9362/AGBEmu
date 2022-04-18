@@ -686,12 +686,13 @@ void CPU::DAA() {
     if (!regs.af.n) {
         if (lsb > 9 || regs.af.h) {
             lsb += 0x06;
-            lsb &= 0xF;
             
             if (lsb & 0x01 << 4) {
                 msb++;
                 if (msb & 0x01 << 4) regs.af.c = 0x01; // if we overflowed set carry
             }
+            
+            lsb &= 0xF;
         }
 
         if (msb > 9 || regs.af.c) {
@@ -710,11 +711,139 @@ void CPU::DAA() {
         }
     }
 
-    regs.af.h = 0x00;
     regs.af.z = 0x00;
+    regs.af.h = 0x00;
     regs.af.accumulator = (msb << 4) | (lsb);
 
-    if (!regs.af.accumulator) regs.af.z = 0x01
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+}
+
+void CPU::DEC_0HL() {
+    uint8_t currentValue = read(regs.hl.value);
+    write(regs.hl.value, currentValue - 1);
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_A() {
+    uint8_t currentValue = regs.af.accumulator;
+    regs.af.accumulator = currentValue - 1;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_B() {
+    uint8_t currentValue = regs.bc.b;
+    regs.bc.b = currentValue - 1;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_BC() {
+    uint16_t currentValue = regs.bc.value;
+    regs.bc.value = currentValue - 1;
+}
+
+void CPU::DEC_C() {
+    uint8_t currentValue = regs.bc.c;
+    regs.bc.c = currentValue - 1;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_D() {
+    uint8_t currentValue = regs.de.d;
+    regs.de.d = currentValue - 1;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_DE() {
+    uint16_t currentValue = regs.de.value;
+    regs.de.value = currentValue - 1;
+}
+
+void CPU::DEC_E() {
+    uint8_t currentValue = regs.de.e;
+    regs.de.e = currentValue - 1;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_H() {
+    uint8_t currentValue = regs.hl.h;
+    regs.hl.h = currentValue - 1;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_HL() {
+    uint16_t currentValue = regs.hl.value;
+    regs.hl.value = currentValue - 1;
+}
+
+void CPU::DEC_L() {
+    uint8_t currentValue = regs.hl.l;
+    regs.hl.l = currentValue - 1;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+
+    if (!regs.af.accumulator) regs.af.z = 0x01;
+    if ((currentValue - 1 & 0b1111) > (currentValue & 0b1111)) regs.af.h = 0x01;
+}
+
+void CPU::DEC_SP() {
+    uint16_t currentValue = regs.stackPointer;
+    regs.stackPointer = currentValue - 1;
+}
+
+void CPU::DI() {
+    IME = 0x00;
+}
+
+void CPU::EI() {
+    scheduleIME = 0x01;
+}
+
+void CPU::HALT() {
+
 }
 
 void CPU::NOP() {
@@ -723,3 +852,13 @@ void CPU::NOP() {
 }
 
 /* #endregion */
+
+void CPU::testCPU() {
+    regs.af.accumulator = 0x53;
+    regs.bc.b = 0x29;
+
+    ADD_A_B();
+    DAA();
+
+    std::cout << std::to_string(regs.af.accumulator) << std::endl;
+}

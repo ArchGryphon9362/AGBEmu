@@ -25,3 +25,7 @@ uint8_t Bus::read(uint16_t addr) {
 void Bus::clock() {
     cpu.clock();
 }
+
+void Bus::testCPU() {
+    cpu.testCPU();
+}

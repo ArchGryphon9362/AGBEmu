@@ -11,5 +11,7 @@ int main(int argc, char const *argv[])
     std::cout << std::to_string(gb.read(0x3A0A)) << std::endl;
     gb.clock();
 
+    gb.testCPU();
+
     return 0;
 }

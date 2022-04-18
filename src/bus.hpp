@@ -13,6 +13,7 @@ class Bus {
         uint8_t read(uint16_t addr);
 
         void clock();
+        void testCPU();
     private:
         CPU cpu;
         std::array<uint8_t, 32 * 1024> ram;
