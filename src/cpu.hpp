@@ -30,8 +30,8 @@ class CPU {
                     uint8_t accumulator : 8;
                     uint8_t unused_1 : 1;
                     uint8_t z : 1; // Zero
-                    uint8_t n : 1; // Subtraction (BCD)
-                    uint8_t h : 1; // Half-Carry (BCD)
+                    uint8_t n : 1; // Subtraction (Used For BCD)
+                    uint8_t h : 1; // Half-Carry (Used For BCD)
                     uint8_t c : 1; // Carry
                     uint8_t unused_2 : 3;
                 };

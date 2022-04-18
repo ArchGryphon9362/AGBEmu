@@ -1,4 +1,3 @@
-void CPU::ADC_A_0HL();
 void CPU::ADC_A_A();
 void CPU::ADC_A_B();
 void CPU::ADC_A_C();

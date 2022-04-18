@@ -50,6 +50,21 @@ void CPU::fetch(uint8_t count) {
 
 /* #region Instructions */
 
+void CPU::ADC_A_0HL() {
+    uint16_t result = regs.af.accumulator + read(regs.hl.value);
+    
+    regs.af.z = 0x00;
+    regs.af.n = 0x00;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if (result & 0x01 << 4) regs.af.h = 0x01;
+    if (result & 0x01 << 8) regs.af.c = 0x01;
+
+    regs.af.accumulator = result;
+}
+
 void CPU::NOP() {
     // No OP'ing is so lame :cry_tear:
     std::cout << "We NOP'd... So lame!" << std::endl;
