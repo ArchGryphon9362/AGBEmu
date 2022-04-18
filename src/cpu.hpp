@@ -88,12 +88,11 @@ class CPU {
         uint16_t fetechedValue = 0x0000; // usually will be 8 bytes but sometimes may be 16 so keeping this a uint16
 
         /* #region Instructions */
-
-//      x0              x1                  x2                  x3              x4              x5              x6              x7              x8                  x9                  xA                  xB              xC              xD              xE              xF
-/*0x*/  void NOP();     void LD_BC_X();     void LD_0BC_A();    void INC_BC();  void INC_B();   void DEC_B();   void LD_B_X();  void RLCA();    void LD_0X_SP();    void ADD_HL_BC();   void LD_A_0BC();    void DEC_BC();  void INC_C();   void DEC_C();   void LD_C_X();  void RRCA();
-/*1x*/  void STOP();    void LD_DE_X();     void LD_0DE_A();    void INC_DE();  void INC_D();   void DEC_D();   void LD_D_X();  void RLA();     void JR_X();        void ADD_HL_DE();   void LD_A_0DE();    void DEC_DE();  void INC_E();   void DEC_E();   void LD_E_X();  void RRA();
-/*2x*/  
-
+/*      x0              x1                  x2                  x3              x4              x5              x6                  x7              x8                  x9                  xA                  xB              xC              xD              xE              xF              */
+/*0x*/  void NOP();     void LD_BC_X();     void LD_0BC_A();    void INC_BC();  void INC_B();   void DEC_B();   void LD_B_X();      void RLCA();    void LD_0X_SP();    void ADD_HL_BC();   void LD_A_0BC();    void DEC_BC();  void INC_C();   void DEC_C();   void LD_C_X();  void RRCA();
+/*1x*/  void STOP();    void LD_DE_X();     void LD_0DE_A();    void INC_DE();  void INC_D();   void DEC_D();   void LD_D_X();      void RLA();     void JR_X();        void ADD_HL_DE();   void LD_A_0DE();    void DEC_DE();  void INC_E();   void DEC_E();   void LD_E_X();  void RRA();
+/*2x*/  void JR_NZ_X(); void LD_HL_X();     void LD_0HLI_A();   void INC_HL();  void INC_H();   void DEC_H();   void LD_H_X();      void DAA();     void JR_Z_X();      void ADD_HL_HL();   void LD_A_0HLI();   void DEC_HL();  void INC_L();   void DEC_L();   void LD_L_X();  void CPL();
+/*3x*/  void JR_NC_X(); void LD_SP_X();     void LD_0HLD_A();   void INC_SP();  void INC_0HL(); void DEC_0HL(); void LD_0HL_X();    void SCF();     void JR_C_X();      void ADD_HL_SP();   void LD_A_0HLD();   void DEC_SP();  void INC_A();   void DEC_A();   void LD_A_X();  void CCF();
         /* #endregion */
 };
 
