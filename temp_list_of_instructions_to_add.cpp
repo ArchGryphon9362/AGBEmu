@@ -1,4 +1,3 @@
-void CPU::DAA();
 void CPU::DEC_0HL();
 void CPU::DEC_A();
 void CPU::DEC_B();

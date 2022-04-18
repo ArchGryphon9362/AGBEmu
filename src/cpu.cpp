@@ -678,6 +678,45 @@ void CPU::CP_X() {
     if (fetchedValue > regs.af.accumulator) regs.af.c = 0x01;
 }
 
+void CPU::DAA() {
+    uint16_t value = regs.af.accumulator;
+    uint8_t lsb = value & 0x0F;
+    uint8_t msb = (value & 0xF0) >> 4;
+
+    if (!regs.af.n) {
+        if (lsb > 9 || regs.af.h) {
+            lsb += 0x06;
+            lsb &= 0xF;
+            
+            if (lsb & 0x01 << 4) {
+                msb++;
+                if (msb & 0x01 << 4) regs.af.c = 0x01; // if we overflowed set carry
+            }
+        }
+
+        if (msb > 9 || regs.af.c) {
+            regs.af.c = 0x01;
+            msb += 0x06;
+            msb &= 0xF;
+        }
+    } else {
+        if (regs.af.c) {
+            msb = ~msb & 0xF;
+            lsb = (~lsb & 0xF) + 0x01;
+        }
+        
+        if (lsb > 9) {
+            lsb -= 0x06;
+        }
+    }
+
+    regs.af.h = 0x00;
+    regs.af.z = 0x00;
+    regs.af.accumulator = (msb << 4) | (lsb);
+
+    if (!regs.af.accumulator) regs.af.z = 0x01
+}
+
 void CPU::NOP() {
     // No OP'ing is so lame :cry_tear:
     std::cout << "We NOP'd... So lame!" << std::endl;
