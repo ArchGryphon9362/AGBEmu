@@ -554,6 +554,130 @@ void CPU::CALL_Z_X() {
     }
 }
 
+void CPU::CCF() {
+    regs.af.n = 0x00;
+    regs.af.h = 0x00;
+    regs.af.c ^= 0x01; // invert carry flag
+}
+
+void CPU::CPL() {
+    regs.af.accumulator = ~regs.af.accumulator;
+    regs.af.n = 0x00;
+    regs.af.h = 0x00;
+}
+
+void CPU::CP_0HL() {
+    uint8_t value = read(regs.hl.value);
+    uint8_t result = regs.af.accumulator - value;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((value & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (value > regs.af.accumulator) regs.af.c = 0x01;
+}
+
+void CPU::CP_A() {
+    regs.af.z = 0x01;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+}
+
+void CPU::CP_B() {
+    uint8_t result = regs.af.accumulator - regs.bc.b;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((regs.bc.b & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (regs.bc.b > regs.af.accumulator) regs.af.c = 0x01;
+}
+
+void CPU::CP_C() {
+    uint8_t result = regs.af.accumulator - regs.bc.c;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((regs.bc.c & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (regs.bc.c > regs.af.accumulator) regs.af.c = 0x01;
+}
+
+void CPU::CP_D() {
+    uint8_t result = regs.af.accumulator - regs.de.d;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((regs.de.d & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (regs.de.d > regs.af.accumulator) regs.af.c = 0x01;
+}
+
+void CPU::CP_E() {
+    uint8_t result = regs.af.accumulator - regs.de.e;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((regs.de.e & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (regs.de.e > regs.af.accumulator) regs.af.c = 0x01;
+}
+
+void CPU::CP_H() {
+    uint8_t result = regs.af.accumulator - regs.hl.h;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((regs.hl.h & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (regs.hl.h > regs.af.accumulator) regs.af.c = 0x01;
+}
+
+void CPU::CP_L() {
+    uint8_t result = regs.af.accumulator - regs.hl.l;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((regs.hl.l & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (regs.hl.l > regs.af.accumulator) regs.af.c = 0x01;
+}
+
+void CPU::CP_X() {
+    uint8_t result = regs.af.accumulator - fetchedValue;
+
+    regs.af.z = 0x00;
+    regs.af.n = 0x01;
+    regs.af.h = 0x00;
+    regs.af.c = 0x00;
+    
+    if (!result) regs.af.z = 0x01;
+    if ((fetchedValue & 0b1111) > (regs.af.accumulator & 0b1111)) regs.af.h = 0x01;
+    if (fetchedValue > regs.af.accumulator) regs.af.c = 0x01;
+}
+
 void CPU::NOP() {
     // No OP'ing is so lame :cry_tear:
     std::cout << "We NOP'd... So lame!" << std::endl;

@@ -1,14 +1,3 @@
-void CPU::CCF();
-void CPU::CPL();
-void CPU::CP_0HL();
-void CPU::CP_A();
-void CPU::CP_B();
-void CPU::CP_C();
-void CPU::CP_D();
-void CPU::CP_E();
-void CPU::CP_H();
-void CPU::CP_L();
-void CPU::CP_X();
 void CPU::DAA();
 void CPU::DEC_0HL();
 void CPU::DEC_A();
