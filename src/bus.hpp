@@ -28,9 +28,10 @@ class Bus {
         };
         
         CPU cpu;
-        std::array<uint8_t, 4 * 1024> ram;
-        Interrupts intFlag;
-        Interrupts intEnable;
+        std::array<uint8_t, 4 * 1024> ram; // wram 0xC000-0xCFFF
+    public:
+        Interrupts intFlag;   // requested interrupts
+        Interrupts intEnable; // "listening for" interrupts
 };
 
 #endif

@@ -29,21 +29,76 @@ uint8_t CPU::read(uint16_t addr) {
 }
 
 void CPU::clock() {
-    if (cycles == 0) {
-        // :: Account for halt bug!
-        if (scheduleIME) { IME = 0x01; scheduleIME = 0x00; }
+    // :: Account for halt bug!
+    uint8_t requestedInts = bus->intEnable.value & bus->intFlag.value;
+    uint8_t nextInt = 0x00;
+    uint8_t handleInterupt = !cycles && IME && requestedInts;
+    uint8_t shouldUnhalt = !cycles && requestedInts;
+    uint8_t haltBugThisCycle = haltBug;
 
+    // get highest priority interrupt
+    for (int i = 4; i >= 0; i--) {
+        if (requestedInts >> i) nextInt = i;
+    }
+
+    if (shouldUnhalt) {
+        halt = 0x00;
+    }
+
+    // handle instruction
+    if (!cycles && !halt) {
         opcode = read(regs.programCounter++);
         cycles = lookup[opcode].cycles;
 
         fetch(lookup[opcode].argLength);
         (this->*lookup[opcode].operate)();
     }
+
+    if (haltBugThisCycle && !handleInterupt) {
+        regs.programCounter--;
+        haltBug = 0x00;
+    }
+
+    // if ime is being scheduled to turn on, do so
+    if (!cycles && scheduleIME) {
+        if (haltBug) {
+            regs.programCounter--;
+            haltBug = 0x00;
+        }
+
+        IME = 0x01;
+        scheduleIME = 0x00;
+    }
+
+    // handle interrupts
+    if (handleInterupt) {
+        bus->intFlag.value = bus->intFlag.value ^ 0x01 << nextInt;
+
+        uint8_t newCounter = 0x00;
+
+        if (!nextInt)     newCounter = 0x40;
+        if (nextInt == 1) newCounter = 0x48;
+        if (nextInt == 2) newCounter = 0x50;
+        if (nextInt == 3) newCounter = 0x58;
+        if (nextInt == 4) newCounter = 0x60;
+
+        write(--regs.stackPointer, (regs.programCounter & 0b1111111100000000) >> 8); // push high byte onto stack
+        write(--regs.stackPointer,  regs.programCounter & 0b0000000011111111);       // push low byte onto stack
+
+        regs.programCounter = newCounter;
+        
+        IME = 0x00;
+        bus->intFlag.value = 0x00;
+        halt = 0x00;
+
+        cycles = 0x05;
+    }
+
     cycles--;
 }
 
 void CPU::fetch(uint8_t count) {
-    if (count == 0) { fetchedValue = 0x0000; return; }                                                         // 0x0000
+    if (!count)     { fetchedValue = 0x0000; return; }                                                         // 0x0000
     if (count == 1) { fetchedValue = read(regs.programCounter++); return; }                                    // 0x00xx
     if (count == 2) { fetchedValue = read(regs.programCounter++) | read(regs.programCounter) << 8; return; }   // 4660 or 0x1234 in little endian is 0x34 0x12 so we "bitwise or" the first byte with the second one shifted left 8 bytes to get back our 0x1234 (4660)
 }
@@ -691,7 +746,7 @@ void CPU::DAA() {
                 msb++;
                 if (msb & 0x01 << 4) regs.af.c = 0x01; // if we overflowed set carry
             }
-            
+
             lsb &= 0xF;
         }
 
@@ -843,7 +898,11 @@ void CPU::EI() {
 }
 
 void CPU::HALT() {
+    halt = 0x01;
 
+    if (!IME && (bus->intEnable.value & bus->intFlag.value)) {
+        haltBug = 0x01;
+    }
 }
 
 void CPU::NOP() {

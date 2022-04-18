@@ -68,6 +68,8 @@ class CPU {
 
         uint8_t IME = 0x00;
         uint8_t scheduleIME = 0x00;
+        uint8_t halt = 0x00;
+        uint8_t haltBug = 0x00;
         
         Registers regs;
         Bus *bus = nullptr;
