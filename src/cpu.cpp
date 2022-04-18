@@ -51,7 +51,7 @@ void CPU::fetch(uint8_t count) {
 /* #region Instructions */
 
 void CPU::ADC_A_0HL() {
-    uint16_t result = regs.af.accumulator + read(regs.hl.value);
+    uint16_t result = regs.af.accumulator + read(regs.hl.value) + regs.af.c;
     
     regs.af.z = 0x00;
     regs.af.n = 0x00;
