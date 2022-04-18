@@ -29,7 +29,6 @@ uint8_t CPU::read(uint16_t addr) {
 }
 
 void CPU::clock() {
-    // :: Account for halt bug!
     uint8_t requestedInts = bus->intEnable.value & bus->intFlag.value;
     uint8_t nextInt = 0x00;
     uint8_t handleInterupt = !cycles && IME && requestedInts;
