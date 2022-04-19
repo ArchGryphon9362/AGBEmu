@@ -3,6 +3,8 @@
 Bus::Bus() {
     // cpu = new CPU();
     for (auto &i : ram) i = 0x00;
+    intFlag.value = 0x00;
+    intEnable.value = 0x00;
     cpu.ConnectBus(this);
 }
 

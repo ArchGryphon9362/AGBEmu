@@ -32,12 +32,12 @@ void CPU::clock() {
     uint8_t requestedInts = bus->intEnable.value & bus->intFlag.value;
     uint8_t nextInt = 0x00;
     uint8_t handleInterupt = !cycles && IME && requestedInts;
-    uint8_t shouldUnhalt = !cycles && requestedInts;
+    uint8_t shouldUnhalt = !cycles && requestedInts && halt;
     uint8_t haltBugThisCycle = haltBug;
 
     // get highest priority interrupt
     for (int i = 4; i >= 0; i--) {
-        if (requestedInts >> i) nextInt = i;
+        if (requestedInts & 0x01 << i) nextInt = i;
     }
 
     if (shouldUnhalt) {
@@ -93,7 +93,8 @@ void CPU::clock() {
         cycles = 0x05;
     }
 
-    cycles--;
+    if (cycles)
+        cycles--;
 }
 
 void CPU::fetch(uint8_t count) {
@@ -897,11 +898,19 @@ void CPU::EI() {
 }
 
 void CPU::HALT() {
+    // :: Remove log
+    std::cout << "Halted";
     halt = 0x01;
 
     if (!IME && (bus->intEnable.value & bus->intFlag.value)) {
+        // :: Remove log
+        std::cout << " with halt bug" << std::endl;
+        std::cout << std::to_string(bus->intEnable.value & bus->intFlag.value);
+
         haltBug = 0x01;
     }
+    std::cout << std::endl;
+    std::cout << "IME is " << (IME ? "on" : "off") << std::endl;
 }
 
 void CPU::NOP() {
@@ -919,4 +928,33 @@ void CPU::testCPU() {
     DAA();
 
     std::cout << std::to_string(regs.af.accumulator) << std::endl;
+
+    // seems to work but can't fully test until i fully implement the cpu, normal interrupts and halts and halt bug without ei work work for sure
+    // halt test
+    // std::cout << std::endl;
+
+    // IME = 0x00;
+
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->intEnable.serial = 0x01;
+    // bus->intFlag.vblank = 0x01;
+    // bus->intFlag.serial = 0x01;
+    // EI();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // HALT();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
+    // bus->clock();
 }
